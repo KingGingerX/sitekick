@@ -37,7 +37,7 @@ export async function GET(
   { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
-  const site = db.select().from(schema.sites).where(eq(schema.sites.previewToken, token)).get();
+  const site = await db.select().from(schema.sites).where(eq(schema.sites.previewToken, token)).get();
 
   if (!site) {
     return new NextResponse('<h1>Preview not found</h1>', {

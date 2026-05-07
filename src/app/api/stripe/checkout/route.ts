@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto';
 export async function POST(req: NextRequest) {
   const { leadId, upsells } = await req.json();
 
-  const lead = db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
+  const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
@@ -20,9 +20,8 @@ export async function POST(req: NextRequest) {
     cancelUrl: `${baseUrl}/deals`,
   });
 
-  // Create deal record
   const dealId = randomUUID();
-  db.insert(schema.deals).values({
+  await db.insert(schema.deals).values({
     id: dealId,
     leadId,
     stage: 'negotiating',

@@ -1,5 +1,3 @@
-import { chromium } from 'playwright';
-
 export interface ScrapedBusiness {
   businessName: string;
   address: string | null;
@@ -14,98 +12,40 @@ export async function scrapeGoogleMaps(
   location: string,
   maxResults = 40
 ): Promise<ScrapedBusiness[]> {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    userAgent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    viewport: { width: 1280, height: 900 },
-  });
-  const page = await context.newPage();
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  if (!apiKey) throw new Error('GOOGLE_PLACES_API_KEY is not set');
 
+  const query = encodeURIComponent(`${niche} near ${location}`);
+  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${apiKey}`;
+
+  const searchRes = await fetch(searchUrl);
+  const searchData = await searchRes.json();
+
+  if (searchData.status !== 'OK' && searchData.status !== 'ZERO_RESULTS') {
+    throw new Error(`Google Places API error: ${searchData.status} — ${searchData.error_message ?? ''}`);
+  }
+
+  const places = (searchData.results ?? []).slice(0, maxResults);
   const results: ScrapedBusiness[] = [];
 
-  try {
-    const query = encodeURIComponent(`${niche} near ${location}`);
-    await page.goto(`https://www.google.com/maps/search/${query}`, {
-      waitUntil: 'networkidle',
-      timeout: 30000,
-    });
-
-    // Dismiss cookie consent if present
+  for (const place of places) {
     try {
-      const acceptBtn = page.locator('button:has-text("Accept all"), button:has-text("Reject all")').first();
-      if (await acceptBtn.isVisible({ timeout: 3000 })) {
-        await acceptBtn.click();
-        await page.waitForTimeout(1000);
-      }
-    } catch {}
+      const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website,rating&key=${apiKey}`;
+      const detailsRes = await fetch(detailsUrl);
+      const detailsData = await detailsRes.json();
+      const d = detailsData.result ?? {};
 
-    // Scroll the results panel to load more
-    const resultsPanel = page.locator('[role="feed"]').first();
-    for (let i = 0; i < 6 && results.length < maxResults; i++) {
-      await resultsPanel.evaluate((el) => el.scrollBy(0, 600));
-      await page.waitForTimeout(1200);
+      results.push({
+        businessName: d.name ?? place.name,
+        address: d.formatted_address ?? place.formatted_address ?? null,
+        phone: d.formatted_phone_number ?? null,
+        websiteUrl: d.website ?? null,
+        googleRating: d.rating ?? place.rating ?? null,
+        googlePlaceId: place.place_id ?? null,
+      });
+    } catch {
+      // skip bad entries
     }
-
-    const listings = await page.locator('[role="feed"] > div[jsaction]').all();
-
-    for (const listing of listings.slice(0, maxResults)) {
-      try {
-        await listing.click();
-        await page.waitForTimeout(1500);
-
-        const name = await page
-          .locator('h1.DUwDvf, h1[class*="fontHeadlineLarge"]')
-          .first()
-          .textContent({ timeout: 5000 })
-          .catch(() => null);
-
-        if (!name) continue;
-
-        const address = await page
-          .locator('[data-item-id="address"] .Io6YTe, button[data-item-id*="address"] .Io6YTe')
-          .first()
-          .textContent({ timeout: 3000 })
-          .catch(() => null);
-
-        const phone = await page
-          .locator('[data-item-id*="phone"] .Io6YTe')
-          .first()
-          .textContent({ timeout: 3000 })
-          .catch(() => null);
-
-        const website = await page
-          .locator('a[data-item-id="authority"]')
-          .first()
-          .getAttribute('href', { timeout: 3000 })
-          .catch(() => null);
-
-        const ratingText = await page
-          .locator('.F7nice span[aria-hidden="true"]')
-          .first()
-          .textContent({ timeout: 3000 })
-          .catch(() => null);
-
-        const rating = ratingText ? parseFloat(ratingText) : null;
-
-        const url = page.url();
-        const placeIdMatch = url.match(/place\/([^/]+)\//);
-        const placeId = placeIdMatch ? placeIdMatch[1] : null;
-
-        results.push({
-          businessName: name.trim(),
-          address: address?.trim() ?? null,
-          phone: phone?.trim() ?? null,
-          websiteUrl: website ?? null,
-          googleRating: isNaN(rating as number) ? null : rating,
-          googlePlaceId: placeId,
-        });
-      } catch {
-        // skip bad listings
-      }
-    }
-  } finally {
-    await browser.close();
   }
 
   return results;

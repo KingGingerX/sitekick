@@ -12,11 +12,10 @@ export async function POST(req: NextRequest) {
 
   for (const biz of scraped) {
     const grade = await gradeWebsite(biz.websiteUrl);
-
     if (!isWorthContacting(grade)) continue;
 
     const id = randomUUID();
-    db.insert(schema.leads).values({
+    await db.insert(schema.leads).values({
       id,
       campaignId,
       businessName: biz.businessName,

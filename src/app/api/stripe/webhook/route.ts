@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Webhook signature invalid' }, { status: 400 });
   }
 
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
     const leadId = session.metadata?.leadId;
     if (leadId) {
-      db.update(schema.deals)
+      await db.update(schema.deals)
         .set({
           stage: 'closed_won',
           stripeSessionId: session.id,
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         .where(eq(schema.deals.leadId, leadId))
         .run();
 
-      db.update(schema.leads)
+      await db.update(schema.leads)
         .set({ status: 'sold' })
         .where(eq(schema.leads.id, leadId))
         .run();

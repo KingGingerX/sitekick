@@ -7,10 +7,10 @@ import { randomUUID } from 'crypto';
 export async function POST(req: NextRequest) {
   const { leadId, stage, overrideEmail } = await req.json();
 
-  const lead = db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
+  const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
-  const site = db.select().from(schema.sites).where(eq(schema.sites.leadId, leadId)).get();
+  const site = await db.select().from(schema.sites).where(eq(schema.sites.leadId, leadId)).get();
   if (!site) return NextResponse.json({ error: 'No site generated for this lead yet' }, { status: 400 });
 
   const toEmail = overrideEmail ?? lead.email;
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   });
 
   const messageId = randomUUID();
-  db.insert(schema.outreachMessages).values({
+  await db.insert(schema.outreachMessages).values({
     id: messageId,
     leadId,
     stage,
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     status: process.env.GMAIL_USER ? 'sent' : 'draft',
   }).run();
 
-  db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, leadId)).run();
+  await db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, leadId)).run();
 
   return NextResponse.json({ id: messageId, subject, body, previewUrl });
 }
@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const leadId = req.nextUrl.searchParams.get('leadId');
   const rows = leadId
-    ? db.select().from(schema.outreachMessages).where(eq(schema.outreachMessages.leadId, leadId)).all()
-    : db.select().from(schema.outreachMessages).all();
+    ? await db.select().from(schema.outreachMessages).where(eq(schema.outreachMessages.leadId, leadId)).all()
+    : await db.select().from(schema.outreachMessages).all();
   return NextResponse.json(rows);
 }
 
@@ -60,11 +60,11 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const { stage = 1 } = await req.json().catch(() => ({}));
 
-  const eligibleLeads = db
+  const eligibleLeads = (await db
     .select()
     .from(schema.leads)
     .where(eq(schema.leads.status, 'site_built'))
-    .all()
+    .all())
     .filter((l) => l.email);
 
   if (eligibleLeads.length === 0) {
@@ -72,7 +72,7 @@ export async function PUT(req: NextRequest) {
   }
 
   const leadIds = eligibleLeads.map((l) => l.id);
-  const sites = db
+  const sites = await db
     .select()
     .from(schema.sites)
     .where(inArray(schema.sites.leadId, leadIds))
@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest) {
         googleRating: lead.googleRating,
       });
 
-      db.insert(schema.outreachMessages).values({
+      await db.insert(schema.outreachMessages).values({
         id: randomUUID(),
         leadId: lead.id,
         stage,
@@ -113,7 +113,7 @@ export async function PUT(req: NextRequest) {
         status: process.env.GMAIL_USER ? 'sent' : 'draft',
       }).run();
 
-      db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, lead.id)).run();
+      await db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, lead.id)).run();
       sent++;
     } catch {
       skipped++;

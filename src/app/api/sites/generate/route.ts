@@ -7,10 +7,10 @@ import { randomUUID } from 'crypto';
 export async function POST(req: NextRequest) {
   const { leadId, template } = await req.json();
 
-  const lead = db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
+  const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
-  const campaign = db.select().from(schema.campaigns).where(eq(schema.campaigns.id, lead.campaignId)).get();
+  const campaign = await db.select().from(schema.campaigns).where(eq(schema.campaigns.id, lead.campaignId)).get();
   if (!campaign) return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
 
   const selectedTemplate = template ?? campaign.nicheTemplate;
@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
   const siteId = randomUUID();
 
   // Delete old site for this lead if any
-  db.delete(schema.sites).where(eq(schema.sites.leadId, leadId)).run();
+  await db.delete(schema.sites).where(eq(schema.sites.leadId, leadId)).run();
 
-  db.insert(schema.sites).values({
+  await db.insert(schema.sites).values({
     id: siteId,
     leadId,
     previewToken,
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   }).run();
 
   // Update lead status
-  db.update(schema.leads).set({ status: 'site_built' }).where(eq(schema.leads.id, leadId)).run();
+  await db.update(schema.leads).set({ status: 'site_built' }).where(eq(schema.leads.id, leadId)).run();
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
   return NextResponse.json({

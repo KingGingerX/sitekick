@@ -40,11 +40,17 @@ export default function CampaignsPage() {
 
   async function create() {
     setLoading(true);
-    await fetch('/api/campaigns', {
+    const res = await fetch('/api/campaigns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(`Error: ${data.error}`);
+      setLoading(false);
+      return;
+    }
     setShowForm(false);
     setForm({ name: '', niche: '', nicheTemplate: 'home-services', location: '', radiusMiles: 25 });
     await load();

@@ -10,21 +10,26 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  await initDb();
-  const body = await req.json();
-  const id = randomUUID();
-  await db.insert(schema.campaigns).values({
-    id,
-    name: body.name,
-    niche: body.niche,
-    nicheTemplate: body.nicheTemplate,
-    location: body.location,
-    radiusMiles: body.radiusMiles ?? 25,
-    keywords: JSON.stringify(body.keywords ?? []),
-    status: 'active',
-    createdAt: new Date(),
-  }).run();
-  return NextResponse.json({ id });
+  try {
+    await initDb();
+    const body = await req.json();
+    const id = randomUUID();
+    await db.insert(schema.campaigns).values({
+      id,
+      name: body.name,
+      niche: body.niche,
+      nicheTemplate: body.nicheTemplate,
+      location: body.location,
+      radiusMiles: body.radiusMiles ?? 25,
+      keywords: JSON.stringify(body.keywords ?? []),
+      status: 'active',
+      createdAt: new Date(),
+    }).run();
+    return NextResponse.json({ id });
+  } catch (err) {
+    console.error('Campaign POST error:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {

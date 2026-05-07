@@ -42,6 +42,14 @@ export async function POST(req: NextRequest) {
       generatedAt: new Date(),
     }).run();
 
+    // Verify the insert worked
+    const saved = await db.select().from(schema.sites).where(eq(schema.sites.previewToken, previewToken)).get();
+    console.log('Site saved check:', saved ? 'FOUND' : 'NOT FOUND', 'token:', previewToken);
+
+    if (!saved) {
+      return NextResponse.json({ error: 'Site was generated but failed to save to database' }, { status: 500 });
+    }
+
     await db.update(schema.leads).set({ status: 'site_built' }).where(eq(schema.leads.id, leadId)).run();
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';

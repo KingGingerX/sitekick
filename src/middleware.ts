@@ -10,8 +10,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const adminPassword = process.env.ADMIN_PASSWORD;
   const auth = request.cookies.get('sk_auth')?.value;
-  if (auth === process.env.ADMIN_PASSWORD) {
+  if (adminPassword && auth === adminPassword) {
     return NextResponse.next();
   }
 

@@ -17,9 +17,10 @@ function LoginForm() {
       body: JSON.stringify({ password }),
     });
     if (res.ok) {
-      router.push(searchParams.get('from') || '/');
+      window.location.href = searchParams.get('from') || '/';
     } else {
-      setError('Wrong password');
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || `Failed (${res.status})`);
     }
   }
 

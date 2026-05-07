@@ -25,6 +25,7 @@ export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [scraping, setScraping] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: '',
     niche: '',
@@ -58,13 +59,18 @@ export default function CampaignsPage() {
   }
 
   async function scrape(c: Campaign) {
-    const res = await fetch('/api/leads/scrape', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ campaignId: c.id, niche: c.niche, location: c.location }),
-    });
-    const data = await res.json();
-    alert(`Scrape complete: ${data.added} qualifying leads added out of ${data.total} found`);
+    setScraping(c.id);
+    try {
+      const res = await fetch('/api/leads/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId: c.id, niche: c.niche, location: c.location }),
+      });
+      const data = await res.json();
+      alert(`Scrape complete: ${data.added} qualifying leads added out of ${data.total} found`);
+    } finally {
+      setScraping(null);
+    }
   }
 
   return (
@@ -166,9 +172,10 @@ export default function CampaignsPage() {
               </span>
               <button
                 onClick={() => scrape(c)}
-                className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100"
+                disabled={scraping === c.id}
+                className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 disabled:opacity-50"
               >
-                🔍 Scrape Leads
+                {scraping === c.id ? '⏳ Scraping...' : '🔍 Scrape Leads'}
               </button>
             </div>
           </div>

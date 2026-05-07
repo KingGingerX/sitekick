@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{BUSINESS_NAME}} | {{TAGLINE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <style>
+    :root {
+      --primary: {{PRIMARY_COLOR}};
+      --accent: {{ACCENT_COLOR}};
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; color: #222; }
+
+    /* NAV */
+    nav {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    nav a { text-decoration: none; color: #444; margin-left: 1.5rem; font-weight: 500; }
+    nav a:hover { color: var(--primary); }
+    .nav-cta {
+      background: var(--primary); color: #fff !important;
+      padding: .5rem 1.2rem; border-radius: 6px;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #111 100%);
+      color: #fff;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1rem; line-height: 1.2; }
+    .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; opacity: .9; }
+    .hero-btn {
+      background: var(--accent); color: #fff;
+      padding: .9rem 2.5rem; border-radius: 8px;
+      font-size: 1.1rem; font-weight: 600;
+      text-decoration: none; display: inline-block;
+      transition: transform .2s;
+    }
+    .hero-btn:hover { transform: translateY(-2px); }
+    .hero-phone { margin-top: 1.5rem; font-size: 1.5rem; font-weight: 700; letter-spacing: .5px; }
+
+    /* BADGES */
+    .badges {
+      background: #f8f8f8;
+      padding: 1.5rem 2rem;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;
+      border-bottom: 1px solid #eee;
+    }
+    .badge { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: #444; }
+    .badge span { font-size: 1.4rem; }
+
+    /* SERVICES */
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-title { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+    .section-sub { text-align: center; color: #666; margin-bottom: 3rem; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .service-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 12px; padding: 2rem;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .service-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-3px); }
+    .service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .service-card h3 { font-size: 1.1rem; margin-bottom: .5rem; color: var(--primary); }
+    .service-card p { color: #666; font-size: .95rem; line-height: 1.5; }
+
+    /* ABOUT */
+    .about { background: #f8faff; padding: 5rem 2rem; }
+    .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-img { background: var(--primary); border-radius: 12px; height: 300px; display: flex; align-items: center; justify-content: center; font-size: 6rem; }
+    .about-text h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .about-text p { color: #555; line-height: 1.8; margin-bottom: 1rem; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 5rem 2rem; background: var(--primary); color: #fff; }
+    .testimonials .section-title { color: #fff; }
+    .testimonials .section-sub { color: rgba(255,255,255,.8); }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .testimonial-card { background: rgba(255,255,255,.12); border-radius: 12px; padding: 1.8rem; }
+    .stars { color: #FFD700; font-size: 1.2rem; margin-bottom: .8rem; }
+    .testimonial-card p { font-style: italic; line-height: 1.6; margin-bottom: 1rem; }
+    .testimonial-author { font-weight: 700; }
+
+    /* CTA BAND */
+    .cta-band { background: var(--accent); color: #fff; text-align: center; padding: 4rem 2rem; }
+    .cta-band h2 { font-size: 2.2rem; margin-bottom: 1rem; }
+    .cta-band p { font-size: 1.1rem; margin-bottom: 2rem; opacity: .9; }
+    .cta-band a { background: #fff; color: var(--accent); padding: .9rem 2.5rem; border-radius: 8px; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+
+    /* CONTACT */
+    #contact { padding: 5rem 2rem; max-width: 700px; margin: 0 auto; }
+    #contact h2 { font-size: 2rem; text-align: center; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: .4rem; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: .8rem 1rem; border: 1px solid #ddd;
+      border-radius: 8px; font-size: 1rem;
+      font-family: inherit;
+    }
+    .form-group textarea { height: 120px; resize: vertical; }
+    .submit-btn {
+      background: var(--primary); color: #fff;
+      border: none; padding: 1rem 2.5rem;
+      border-radius: 8px; font-size: 1.1rem;
+      font-weight: 600; cursor: pointer; width: 100%;
+      transition: opacity .2s;
+    }
+    .submit-btn:hover { opacity: .9; }
+
+    /* FOOTER */
+    footer { background: #111; color: #aaa; padding: 2rem; text-align: center; font-size: .9rem; }
+    footer a { color: #aaa; }
+
+    @media (max-width: 768px) {
+      .about-inner { grid-template-columns: 1fr; }
+      .about-img { display: none; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">{{BUSINESS_NAME}}</div>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <a href="tel:{{PHONE}}" class="nav-cta">Call Now</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>{{HERO_HEADLINE}}</h1>
+  <p>{{DESCRIPTION}}</p>
+  <a href="#contact" class="hero-btn">{{CTA_TEXT}}</a>
+  <div class="hero-phone">📞 {{PHONE}}</div>
+</section>
+
+<div class="badges">
+  <div class="badge"><span>✅</span> Licensed & Insured</div>
+  <div class="badge"><span>⚡</span> Fast Response Time</div>
+  <div class="badge"><span>🏆</span> 5-Star Rated</div>
+  <div class="badge"><span>💯</span> Satisfaction Guaranteed</div>
+</div>
+
+<section class="section" id="services">
+  <div class="section-title">Our Services</div>
+  <div class="section-sub">Everything you need, done right the first time</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🔧</div>
+      <h3>{{SERVICE_1_TITLE}}</h3>
+      <p>{{SERVICE_1_DESC}}</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🛠️</div>
+      <h3>{{SERVICE_2_TITLE}}</h3>
+      <p>{{SERVICE_2_DESC}}</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">⚙️</div>
+      <h3>{{SERVICE_3_TITLE}}</h3>
+      <p>{{SERVICE_3_DESC}}</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🏠</div>
+      <h3>{{SERVICE_4_TITLE}}</h3>
+      <p>{{SERVICE_4_DESC}}</p>
+    </div>
+  </div>
+</section>
+
+<div class="about">
+  <div class="about-inner">
+    <div class="about-img">🏗️</div>
+    <div class="about-text">
+      <h2>Why Choose {{BUSINESS_NAME}}?</h2>
+      <p>{{DESCRIPTION}}</p>
+      <p>We're committed to delivering professional, reliable service every time. Your satisfaction is our priority — from the first call to the final walk-through.</p>
+      <a href="tel:{{PHONE}}" style="color: var(--primary); font-weight:700; font-size:1.1rem;">Call {{PHONE}}</a>
+    </div>
+  </div>
+</div>
+
+<section class="testimonials">
+  <div class="section-title">What Our Customers Say</div>
+  <div class="section-sub">Real reviews from real neighbors</div>
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_1_TEXT}}"</p>
+      <div class="testimonial-author">— {{TESTIMONIAL_1_AUTHOR}}</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_2_TEXT}}"</p>
+      <div class="testimonial-author">— {{TESTIMONIAL_2_AUTHOR}}</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_3_TEXT}}"</p>
+      <div class="testimonial-author">— {{TESTIMONIAL_3_AUTHOR}}</div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Ready to Get Started?</h2>
+  <p>Call us today for a free estimate — no obligation, no hassle.</p>
+  <a href="tel:{{PHONE}}">Call {{PHONE}}</a>
+</div>
+
+<section id="contact">
+  <h2>Get a Free Quote</h2>
+  <form onsubmit="handleSubmit(event)">
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" placeholder="John Smith" required />
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" placeholder="(555) 000-0000" required />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="you@email.com" />
+    </div>
+    <div class="form-group">
+      <label>Tell us what you need</label>
+      <textarea placeholder="Describe your project..."></textarea>
+    </div>
+    <button type="submit" class="submit-btn">{{CTA_TEXT}}</button>
+  </form>
+</section>
+
+<footer>
+  <p>{{BUSINESS_NAME}} | {{ADDRESS}} | <a href="tel:{{PHONE}}">{{PHONE}}</a> | <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+  <p style="margin-top:.5rem;">© {{YEAR}} {{BUSINESS_NAME}}. All rights reserved.</p>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  alert('Thank you! We\'ll be in touch shortly.');
+  e.target.reset();
+}
+</script>
+</body>
+</html>

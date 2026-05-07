@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{BUSINESS_NAME}} | {{TAGLINE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <style>
+    :root { --primary: {{PRIMARY_COLOR}}; --accent: {{ACCENT_COLOR}}; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Georgia', serif; color: #222; }
+
+    nav {
+      background: #1a1a1a; padding: 1.2rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.6rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
+    nav a { color: #ccc; text-decoration: none; margin-left: 1.5rem; font-family: 'Segoe UI', sans-serif; }
+    nav a:hover { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: #fff !important; padding: .5rem 1.2rem; border-radius: 6px; }
+
+    .hero {
+      background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400') center/cover;
+      color: #fff; text-align: center; padding: 8rem 2rem;
+    }
+    .hero-tag { font-family: 'Segoe UI', sans-serif; font-size: .9rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; }
+    .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; font-style: italic; opacity: .9; }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--accent); color: #fff; padding: .9rem 2rem; border-radius: 6px; text-decoration: none; font-family: 'Segoe UI', sans-serif; font-weight: 600; }
+    .btn-outline { border: 2px solid #fff; color: #fff; padding: .9rem 2rem; border-radius: 6px; text-decoration: none; font-family: 'Segoe UI', sans-serif; font-weight: 600; }
+
+    .info-bar { background: var(--primary); color: #fff; padding: 1.5rem 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; font-family: 'Segoe UI', sans-serif; }
+    .info-item { display: flex; align-items: center; gap: .5rem; }
+
+    .menu-section { padding: 5rem 2rem; max-width: 1000px; margin: 0 auto; }
+    .menu-section h2 { text-align: center; font-size: 2.2rem; margin-bottom: .5rem; }
+    .menu-tag { text-align: center; color: var(--accent); font-family: 'Segoe UI', sans-serif; letter-spacing: 2px; font-size: .85rem; text-transform: uppercase; margin-bottom: 3rem; }
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .menu-card { border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
+    .menu-card-img { background: var(--primary); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+    .menu-card-body { padding: 1.5rem; }
+    .menu-card-body h3 { font-size: 1.2rem; margin-bottom: .4rem; }
+    .menu-card-body p { color: #666; font-size: .95rem; line-height: 1.5; font-family: 'Segoe UI', sans-serif; }
+
+    .testimonials { background: #1a1a1a; color: #fff; padding: 5rem 2rem; text-align: center; }
+    .testimonials h2 { font-size: 2rem; margin-bottom: 3rem; }
+    .t-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+    .t-card { background: #2a2a2a; padding: 2rem; border-radius: 10px; text-align: left; }
+    .stars { color: var(--accent); font-size: 1.1rem; margin-bottom: 1rem; }
+    .t-card p { font-style: italic; line-height: 1.7; color: #ccc; font-size: .95rem; margin-bottom: 1rem; }
+    .t-author { font-family: 'Segoe UI', sans-serif; color: var(--accent); font-weight: 600; }
+
+    #contact { background: var(--primary); color: #fff; padding: 5rem 2rem; text-align: center; }
+    #contact h2 { font-size: 2rem; margin-bottom: 1rem; }
+    #contact p { margin-bottom: 2rem; opacity: .9; font-family: 'Segoe UI', sans-serif; }
+    .contact-grid { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; font-family: 'Segoe UI', sans-serif; }
+    .contact-item { font-size: 1.1rem; }
+    .contact-item a { color: #fff; }
+
+    footer { background: #111; color: #666; padding: 2rem; text-align: center; font-family: 'Segoe UI', sans-serif; font-size: .9rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">{{BUSINESS_NAME}}</div>
+  <div>
+    <a href="#menu">Menu</a>
+    <a href="#contact">Location</a>
+    <a href="tel:{{PHONE}}" class="nav-cta">Reserve</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">{{TAGLINE}}</div>
+  <h1>{{HERO_HEADLINE}}</h1>
+  <p>{{DESCRIPTION}}</p>
+  <div class="hero-btns">
+    <a href="#menu" class="btn-primary">View Menu</a>
+    <a href="tel:{{PHONE}}" class="btn-outline">Call to Reserve</a>
+  </div>
+</section>
+
+<div class="info-bar">
+  <div class="info-item">📍 {{ADDRESS}}</div>
+  <div class="info-item">📞 {{PHONE}}</div>
+  <div class="info-item">🕐 Open Daily 11am–10pm</div>
+</div>
+
+<section class="menu-section" id="menu">
+  <h2>Our Specialties</h2>
+  <div class="menu-tag">Fresh Ingredients, Bold Flavors</div>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-img">🍽️</div>
+      <div class="menu-card-body">
+        <h3>{{SERVICE_1_TITLE}}</h3>
+        <p>{{SERVICE_1_DESC}}</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🥘</div>
+      <div class="menu-card-body">
+        <h3>{{SERVICE_2_TITLE}}</h3>
+        <p>{{SERVICE_2_DESC}}</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🍱</div>
+      <div class="menu-card-body">
+        <h3>{{SERVICE_3_TITLE}}</h3>
+        <p>{{SERVICE_3_DESC}}</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🍰</div>
+      <div class="menu-card-body">
+        <h3>{{SERVICE_4_TITLE}}</h3>
+        <p>{{SERVICE_4_DESC}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2>What Guests Are Saying</h2>
+  <div class="t-grid">
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_1_TEXT}}"</p>
+      <div class="t-author">— {{TESTIMONIAL_1_AUTHOR}}</div>
+    </div>
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_2_TEXT}}"</p>
+      <div class="t-author">— {{TESTIMONIAL_2_AUTHOR}}</div>
+    </div>
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"{{TESTIMONIAL_3_TEXT}}"</p>
+      <div class="t-author">— {{TESTIMONIAL_3_AUTHOR}}</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Find Us</h2>
+  <p>Come in, call ahead, or order online. We'd love to serve you.</p>
+  <div class="contact-grid">
+    <div class="contact-item">📍 {{ADDRESS}}</div>
+    <div class="contact-item">📞 <a href="tel:{{PHONE}}">{{PHONE}}</a></div>
+    <div class="contact-item">✉️ <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></div>
+  </div>
+</section>
+
+<footer>
+  <p>© {{YEAR}} {{BUSINESS_NAME}}. All rights reserved.</p>
+</footer>
+</body>
+</html>

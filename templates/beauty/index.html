@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{BUSINESS_NAME}} | {{TAGLINE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <style>
+    :root { --primary: {{PRIMARY_COLOR}}; --accent: {{ACCENT_COLOR}}; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Georgia', serif; color: #1a1a1a; }
+
+    nav { background: #fff; padding: 1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 8px rgba(0,0,0,.07); position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); letter-spacing: .5px; font-style: italic; }
+    nav a { text-decoration: none; color: #666; margin-left: 1.5rem; font-weight: 400; font-family: 'Segoe UI', sans-serif; font-size: .95rem; }
+    nav a:hover { color: var(--primary); }
+    .nav-cta { background: var(--primary); color: #fff !important; padding: .5rem 1.4rem; border-radius: 50px; font-style: normal; font-weight: 600; }
+
+    .hero { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff; padding: 8rem 2rem; text-align: center; position: relative; overflow: hidden; }
+    .hero::after { content: '✦ ✦ ✦'; position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); opacity: .3; font-size: 1.2rem; letter-spacing: 1.5rem; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 1rem; line-height: 1.2; letter-spacing: .5px; }
+    .hero p { font-family: 'Segoe UI', sans-serif; font-size: 1.1rem; max-width: 540px; margin: 0 auto 2.2rem; opacity: .9; }
+    .hero-btn { background: #fff; color: var(--primary); padding: 1rem 2.8rem; border-radius: 50px; font-size: 1.05rem; font-weight: 700; text-decoration: none; font-family: 'Segoe UI', sans-serif; display: inline-block; transition: transform .2s; }
+    .hero-btn:hover { transform: translateY(-3px); }
+    .hero-phone { margin-top: 2rem; font-size: 1.4rem; font-style: italic; }
+
+    .tagline-bar { background: #fdf2f8; border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 1.5rem 2rem; text-align: center; }
+    .tagline-bar p { font-style: italic; color: var(--primary); font-size: 1.15rem; letter-spacing: .3px; }
+
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-title { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: .4rem; }
+    .section-sub { text-align: center; color: #9ca3af; margin-bottom: 3rem; font-family: 'Segoe UI', sans-serif; font-size: .95rem; letter-spacing: .5px; text-transform: uppercase; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+    .service-card { background: #fff; border: 1px solid #fce7f3; border-radius: 16px; padding: 2rem; text-align: center; transition: transform .2s, box-shadow .2s; }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(var(--primary), .15); }
+    .service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .service-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; color: var(--primary); }
+    .service-card p { color: #6b7280; font-size: .9rem; font-family: 'Segoe UI', sans-serif; line-height: 1.55; }
+
+    .about { background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); padding: 5rem 2rem; }
+    .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-icon { font-size: 9rem; text-align: center; }
+    .about h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--primary); }
+    .about p { color: #374151; line-height: 1.8; font-family: 'Segoe UI', sans-serif; margin-bottom: 1rem; }
+    .about .phone-link { color: var(--primary); font-size: 1.2rem; font-weight: 700; text-decoration: none; font-family: 'Segoe UI', sans-serif; }
+
+    .testimonials { padding: 5rem 2rem; background: #1a1a1a; }
+    .testimonials .section-title { color: #fff; }
+    .testimonials .section-sub { color: #9ca3af; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .testimonial-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 1.8rem; }
+    .stars { color: var(--accent); font-size: 1.1rem; margin-bottom: .8rem; }
+    .testimonial-card p { font-style: italic; line-height: 1.7; color: #d1d5db; margin-bottom: 1rem; font-size: .95rem; }
+    .testimonial-author { font-weight: 700; color: #fff; font-size: .9rem; font-family: 'Segoe UI', sans-serif; }
+
+    .cta-band { background: var(--primary); color: #fff; text-align: center; padding: 5rem 2rem; }
+    .cta-band h2 { font-size: 2.3rem; font-weight: 700; margin-bottom: .8rem; }
+    .cta-band p { font-family: 'Segoe UI', sans-serif; font-size: 1.05rem; margin-bottom: 2rem; opacity: .9; }
+    .cta-band a { background: #fff; color: var(--primary); padding: 1rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.05rem; text-decoration: none; font-family: 'Segoe UI', sans-serif; }
+
+    #contact { padding: 5rem 2rem; max-width: 680px; margin: 0 auto; }
+    #contact h2 { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; font-family: 'Segoe UI', sans-serif; margin-bottom: .4rem; font-size: .95rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: .85rem 1rem; border: 1.5px solid #fce7f3; border-radius: 10px; font-size: 1rem; font-family: 'Segoe UI', sans-serif; transition: border-color .2s; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .submit-btn { background: var(--primary); color: #fff; border: none; padding: 1rem 2.5rem; border-radius: 50px; font-size: 1.05rem; font-weight: 600; cursor: pointer; width: 100%; font-family: 'Segoe UI', sans-serif; }
+    .submit-btn:hover { opacity: .9; }
+
+    footer { background: #0d0d0d; color: #888; padding: 2rem; text-align: center; font-family: 'Segoe UI', sans-serif; font-size: .88rem; }
+    footer a { color: #888; }
+
+    @media (max-width: 768px) {
+      .about-inner { grid-template-columns: 1fr; }
+      .about-icon { display: none; }
+      nav a:not(.nav-cta):not(:last-child) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">{{BUSINESS_NAME}}</div>
+  <div>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#contact">Book Now</a>
+    <a href="tel:{{PHONE}}" class="nav-cta">📞 Call Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>{{HERO_HEADLINE}}</h1>
+  <p>{{DESCRIPTION}}</p>
+  <a href="#contact" class="hero-btn">{{CTA_TEXT}}</a>
+  <div class="hero-phone">📞 {{PHONE}}</div>
+</section>
+
+<div class="tagline-bar">
+  <p>"{{TAGLINE}}"</p>
+</div>
+
+<section class="section" id="services">
+  <div class="section-title">Our Services</div>
+  <div class="section-sub">beauty · wellness · confidence</div>
+  <div class="services-grid">
+    <div class="service-card"><div class="service-icon">✂️</div><h3>{{SERVICE_1_TITLE}}</h3><p>{{SERVICE_1_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">🎨</div><h3>{{SERVICE_2_TITLE}}</h3><p>{{SERVICE_2_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">💅</div><h3>{{SERVICE_3_TITLE}}</h3><p>{{SERVICE_3_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">💆</div><h3>{{SERVICE_4_TITLE}}</h3><p>{{SERVICE_4_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">🌸</div><h3>{{SERVICE_5_TITLE}}</h3><p>{{SERVICE_5_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">✨</div><h3>{{SERVICE_6_TITLE}}</h3><p>{{SERVICE_6_DESC}}</p></div>
+  </div>
+</section>
+
+<div class="about">
+  <div class="about-inner">
+    <div class="about-icon">💄</div>
+    <div>
+      <h2>About {{BUSINESS_NAME}}</h2>
+      <p>{{DESCRIPTION}}</p>
+      <p>Our expert stylists and estheticians are passionate about making you feel your absolute best. We use premium products and personalized techniques tailored to you.</p>
+      <a href="tel:{{PHONE}}" class="phone-link">📞 Book: {{PHONE}}</a>
+    </div>
+  </div>
+</div>
+
+<section class="testimonials">
+  <div class="section-title">Client Love</div>
+  <div class="section-sub">real stories · real results</div>
+  <div class="testimonial-grid">
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_1_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_1_AUTHOR}}</div></div>
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_2_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_2_AUTHOR}}</div></div>
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_3_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_3_AUTHOR}}</div></div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Ready to Glow?</h2>
+  <p>Book your appointment today and treat yourself to the experience you deserve.</p>
+  <a href="#contact">Book Your Appointment</a>
+</div>
+
+<section id="contact">
+  <h2>Book an Appointment</h2>
+  <form onsubmit="handleSubmit(event)">
+    <div class="form-group"><label>Your Name</label><input type="text" placeholder="Sarah Johnson" required /></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="(555) 000-0000" required /></div>
+    <div class="form-group"><label>Service</label>
+      <select>
+        <option value="">Select a service...</option>
+        <option>Haircut &amp; Style</option>
+        <option>Color &amp; Highlights</option>
+        <option>Manicure / Pedicure</option>
+        <option>Facial Treatment</option>
+        <option>Waxing</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Preferred Date &amp; Time</label><input type="text" placeholder="e.g. Weekdays after 3pm" /></div>
+    <div class="form-group"><label>Anything else?</label><textarea placeholder="Any special requests or notes..."></textarea></div>
+    <button type="submit" class="submit-btn">{{CTA_TEXT}}</button>
+  </form>
+</section>
+
+<footer>
+  <p>{{BUSINESS_NAME}} | {{ADDRESS}} | <a href="tel:{{PHONE}}">{{PHONE}}</a> | <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+  <p style="margin-top:.5rem">© {{YEAR}} {{BUSINESS_NAME}}. All rights reserved.</p>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  alert("Thank you, gorgeous! We'll text or call you within a few hours to confirm your booking.");
+  e.target.reset();
+}
+</script>
+</body>
+</html>

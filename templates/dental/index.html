@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{BUSINESS_NAME}} | {{TAGLINE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <style>
+    :root { --primary: {{PRIMARY_COLOR}}; --accent: {{ACCENT_COLOR}}; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; color: #1f2937; }
+
+    nav { background: #fff; padding: 1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 12px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 100; }
+    .logo { display: flex; align-items: center; gap: .6rem; font-size: 1.35rem; font-weight: 800; color: var(--primary); }
+    .logo-icon { font-size: 1.8rem; }
+    nav a { text-decoration: none; color: #555; margin-left: 1.5rem; font-weight: 500; font-size: .95rem; transition: color .15s; }
+    nav a:hover { color: var(--primary); }
+    .nav-cta { background: var(--primary); color: #fff !important; padding: .5rem 1.3rem; border-radius: 50px; font-weight: 600; }
+
+    .hero { background: linear-gradient(135deg, var(--primary) 0%, #0891b2 100%); color: #fff; padding: 7rem 2rem; text-align: center; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+    .hero p { font-size: 1.15rem; max-width: 560px; margin: 0 auto 2.2rem; opacity: .9; }
+    .hero-btn { background: #fff; color: var(--primary); padding: 1rem 2.8rem; border-radius: 50px; font-size: 1.05rem; font-weight: 700; text-decoration: none; display: inline-block; transition: transform .2s, box-shadow .2s; }
+    .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
+    .hero-phone { margin-top: 1.8rem; font-size: 1.5rem; font-weight: 700; }
+
+    .badges { background: #f0f9ff; border-top: 3px solid var(--primary); padding: 1.5rem 2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
+    .badge { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: #0c4a6e; font-size: .9rem; }
+
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-title { text-align: center; font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    .section-sub { text-align: center; color: #6b7280; margin-bottom: 3rem; font-size: 1rem; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; }
+    .service-card { background: #fff; border: 1.5px solid #e0f2fe; border-radius: 14px; padding: 2rem; text-align: center; transition: box-shadow .2s, transform .2s; }
+    .service-card:hover { box-shadow: 0 8px 28px rgba(14,116,144,.12); transform: translateY(-3px); }
+    .service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .service-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; color: var(--primary); }
+    .service-card p { color: #6b7280; font-size: .9rem; line-height: 1.55; }
+
+    .about { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 5rem 2rem; }
+    .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-icon { font-size: 9rem; text-align: center; }
+    .about h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--primary); }
+    .about p { color: #374151; line-height: 1.8; margin-bottom: 1rem; }
+    .about .phone-link { color: var(--primary); font-size: 1.2rem; font-weight: 700; text-decoration: none; }
+
+    .testimonials { padding: 5rem 2rem; background: var(--primary); }
+    .testimonials .section-title, .testimonials .section-sub { color: #fff; }
+    .testimonials .section-sub { opacity: .8; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .testimonial-card { background: rgba(255,255,255,.12); border-radius: 14px; padding: 1.8rem; }
+    .stars { color: #fbbf24; font-size: 1.1rem; margin-bottom: .8rem; }
+    .testimonial-card p { font-style: italic; line-height: 1.6; color: rgba(255,255,255,.9); margin-bottom: 1rem; font-size: .95rem; }
+    .testimonial-author { font-weight: 700; color: #fff; font-size: .9rem; }
+
+    .cta-band { background: #fff; text-align: center; padding: 5rem 2rem; border-top: 1px solid #e5e7eb; }
+    .cta-band h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: .8rem; color: #111; }
+    .cta-band p { font-size: 1.05rem; margin-bottom: 2rem; color: #555; }
+    .cta-band a { background: var(--primary); color: #fff; padding: 1rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+
+    #contact { padding: 5rem 2rem; max-width: 680px; margin: 0 auto; background: #f9fafb; }
+    #contact h2 { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: .4rem; font-size: .95rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: .85rem 1rem; border: 1.5px solid #d1d5db; border-radius: 9px; font-size: 1rem; font-family: inherit; transition: border-color .2s; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .submit-btn { background: var(--primary); color: #fff; border: none; padding: 1rem 2.5rem; border-radius: 50px; font-size: 1.05rem; font-weight: 700; cursor: pointer; width: 100%; }
+    .submit-btn:hover { opacity: .9; }
+
+    footer { background: #0c4a6e; color: #94a3b8; padding: 2rem; text-align: center; font-size: .88rem; }
+    footer a { color: #94a3b8; }
+
+    @media (max-width: 768px) {
+      .about-inner { grid-template-columns: 1fr; }
+      .about-icon { display: none; }
+      nav a:not(.nav-cta):not(:last-child) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-icon">🦷</span>{{BUSINESS_NAME}}</div>
+  <div>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <a href="tel:{{PHONE}}" class="nav-cta">Book Appointment</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>{{HERO_HEADLINE}}</h1>
+  <p>{{DESCRIPTION}}</p>
+  <a href="#contact" class="hero-btn">{{CTA_TEXT}}</a>
+  <div class="hero-phone">📞 {{PHONE}}</div>
+</section>
+
+<div class="badges">
+  <div class="badge">🦷 General &amp; Cosmetic Dentistry</div>
+  <div class="badge">✅ New Patients Welcome</div>
+  <div class="badge">💳 Most Insurance Accepted</div>
+  <div class="badge">🚨 Emergency Appointments Available</div>
+</div>
+
+<section class="section" id="services">
+  <div class="section-title">Our Dental Services</div>
+  <div class="section-sub">Comprehensive care for your whole family — all in one place</div>
+  <div class="services-grid">
+    <div class="service-card"><div class="service-icon">🦷</div><h3>{{SERVICE_1_TITLE}}</h3><p>{{SERVICE_1_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">✨</div><h3>{{SERVICE_2_TITLE}}</h3><p>{{SERVICE_2_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">😁</div><h3>{{SERVICE_3_TITLE}}</h3><p>{{SERVICE_3_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">🔬</div><h3>{{SERVICE_4_TITLE}}</h3><p>{{SERVICE_4_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">💎</div><h3>{{SERVICE_5_TITLE}}</h3><p>{{SERVICE_5_DESC}}</p></div>
+    <div class="service-card"><div class="service-icon">🚨</div><h3>{{SERVICE_6_TITLE}}</h3><p>{{SERVICE_6_DESC}}</p></div>
+  </div>
+</section>
+
+<div class="about">
+  <div class="about-inner">
+    <div class="about-icon">🏥</div>
+    <div>
+      <h2>Why Choose {{BUSINESS_NAME}}?</h2>
+      <p>{{DESCRIPTION}}</p>
+      <p>We combine gentle, patient-centered care with the latest dental technology to make every visit comfortable and efficient. Your smile is our priority.</p>
+      <a href="tel:{{PHONE}}" class="phone-link">📞 Call {{PHONE}}</a>
+    </div>
+  </div>
+</div>
+
+<section class="testimonials">
+  <div class="section-title">Patient Reviews</div>
+  <div class="section-sub">Hundreds of happy smiles in our community</div>
+  <div class="testimonial-grid">
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_1_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_1_AUTHOR}}</div></div>
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_2_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_2_AUTHOR}}</div></div>
+    <div class="testimonial-card"><div class="stars">★★★★★</div><p>"{{TESTIMONIAL_3_TEXT}}"</p><div class="testimonial-author">— {{TESTIMONIAL_3_AUTHOR}}</div></div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Ready for a Healthier Smile?</h2>
+  <p>Book your appointment today — new patients always welcome.</p>
+  <a href="#contact">Schedule Your Visit</a>
+</div>
+
+<section id="contact">
+  <h2>Request an Appointment</h2>
+  <form onsubmit="handleSubmit(event)">
+    <div class="form-group"><label>Full Name</label><input type="text" placeholder="Jane Smith" required /></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="(555) 000-0000" required /></div>
+    <div class="form-group"><label>Email Address</label><input type="email" placeholder="you@email.com" /></div>
+    <div class="form-group"><label>Service Needed</label>
+      <select>
+        <option value="">Select a service...</option>
+        <option>General Check-up & Cleaning</option>
+        <option>Teeth Whitening</option>
+        <option>Orthodontics / Braces</option>
+        <option>Emergency Care</option>
+        <option>Dental Implants</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Additional Notes</label><textarea placeholder="Any specific concerns or questions?"></textarea></div>
+    <button type="submit" class="submit-btn">{{CTA_TEXT}}</button>
+  </form>
+</section>
+
+<footer>
+  <p>{{BUSINESS_NAME}} | {{ADDRESS}} | <a href="tel:{{PHONE}}">{{PHONE}}</a> | <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+  <p style="margin-top:.5rem">© {{YEAR}} {{BUSINESS_NAME}}. All rights reserved.</p>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  alert("Thank you! We'll contact you within 1 business day to confirm your appointment.");
+  e.target.reset();
+}
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const adminPassword = 'changeme123';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'changeme123';
   const auth = request.cookies.get('sk_auth')?.value;
   if (auth === adminPassword) {
     return NextResponse.next();

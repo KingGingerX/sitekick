@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   const { password } = await req.json();
-  const adminPassword = 'changeme123';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'changeme123';
   if (password !== adminPassword) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

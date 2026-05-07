@@ -118,6 +118,6 @@ export async function gradeWebsite(url: string | null): Promise<GradeResult> {
   }
 }
 
-export function isWorthContacting(grade: GradeResult): boolean {
-  return !grade.hasSite || grade.score < 80;
+export function isWorthContacting(_grade: GradeResult): boolean {
+  return true;
 }

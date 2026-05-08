@@ -5,46 +5,51 @@ import { sendOutreachEmail } from '@/lib/outreach/mailer';
 import { randomUUID } from 'crypto';
 
 export async function POST(req: NextRequest) {
-  const { leadId, stage, overrideEmail } = await req.json();
+  try {
+    const { leadId, stage, overrideEmail } = await req.json();
 
-  const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
-  if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
+    if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
-  const site = await db.select().from(schema.sites).where(eq(schema.sites.leadId, leadId)).get();
-  if (!site) return NextResponse.json({ error: 'No site generated for this lead yet' }, { status: 400 });
+    const site = await db.select().from(schema.sites).where(eq(schema.sites.leadId, leadId)).get();
+    if (!site) return NextResponse.json({ error: 'No site generated for this lead yet' }, { status: 400 });
 
-  const toEmail = overrideEmail ?? lead.email;
-  if (!toEmail) return NextResponse.json({ error: 'No email address — add one to the lead first' }, { status: 400 });
+    const toEmail = overrideEmail ?? lead.email;
+    if (!toEmail) return NextResponse.json({ error: 'No email address — add one to the lead first' }, { status: 400 });
 
-  const previewUrl = `${req.nextUrl.origin}/preview/${site.previewToken}`;
+    const previewUrl = `${req.nextUrl.origin}/preview/${site.previewToken}`;
 
-  const websiteIssues: string[] = lead.websiteIssues ? JSON.parse(lead.websiteIssues) : [];
+    const websiteIssues: string[] = lead.websiteIssues ? JSON.parse(lead.websiteIssues) : [];
 
-  const { subject, body } = await sendOutreachEmail({
-    to: toEmail,
-    businessName: lead.businessName,
-    previewUrl,
-    senderName: process.env.SENDER_NAME ?? 'Your Name',
-    stage: stage as 1 | 2 | 3,
-    websiteScore: lead.websiteScore,
-    websiteIssues,
-    googleRating: lead.googleRating,
-  });
+    const { subject, body } = await sendOutreachEmail({
+      to: toEmail,
+      businessName: lead.businessName,
+      previewUrl,
+      senderName: process.env.SENDER_NAME ?? 'Your Name',
+      stage: stage as 1 | 2 | 3,
+      websiteScore: lead.websiteScore,
+      websiteIssues,
+      googleRating: lead.googleRating,
+    });
 
-  const messageId = randomUUID();
-  await db.insert(schema.outreachMessages).values({
-    id: messageId,
-    leadId,
-    stage,
-    subject,
-    body,
-    sentAt: toEmail && process.env.GMAIL_USER ? new Date() : null,
-    status: process.env.GMAIL_USER ? 'sent' : 'draft',
-  }).run();
+    const messageId = randomUUID();
+    await db.insert(schema.outreachMessages).values({
+      id: messageId,
+      leadId,
+      stage,
+      subject,
+      body,
+      sentAt: toEmail && process.env.GMAIL_USER ? new Date() : null,
+      status: process.env.GMAIL_USER ? 'sent' : 'draft',
+    }).run();
 
-  await db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, leadId)).run();
+    await db.update(schema.leads).set({ status: 'contacted' }).where(eq(schema.leads.id, leadId)).run();
 
-  return NextResponse.json({ id: messageId, subject, body, previewUrl });
+    return NextResponse.json({ id: messageId, subject, body, previewUrl });
+  } catch (err) {
+    console.error('Outreach POST error:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }
 
 export async function GET(req: NextRequest) {

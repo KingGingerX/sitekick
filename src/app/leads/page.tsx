@@ -54,19 +54,24 @@ export default function LeadsPage() {
 
   async function sendOutreach(lead: Lead, stage: 1 | 2 | 3) {
     setSending(lead.id);
-    const res = await fetch('/api/outreach', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leadId: lead.id, stage, overrideEmail: editEmail || lead.email }),
-    });
-    const data = await res.json();
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert(`Email ${process.env.NEXT_PUBLIC_GMAIL_CONFIGURED === 'true' ? 'sent' : 'drafted (Gmail not configured)'}!\n\nSubject: ${data.subject}`);
+    try {
+      const res = await fetch('/api/outreach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadId: lead.id, stage, overrideEmail: editEmail || lead.email }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+      } else {
+        alert(`Email sent!\n\nSubject: ${data.subject}`);
+      }
+      await load();
+    } catch (err) {
+      alert(`Failed: ${err}`);
+    } finally {
+      setSending(null);
     }
-    await load();
-    setSending(null);
   }
 
   async function updateEmail(lead: Lead) {

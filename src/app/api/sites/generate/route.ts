@@ -52,10 +52,11 @@ export async function POST(req: NextRequest) {
 
     await db.update(schema.leads).set({ status: 'site_built' }).where(eq(schema.leads.id, leadId)).run();
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+    const origin = req.nextUrl.origin;
     return NextResponse.json({
       siteId,
-      previewUrl: `${baseUrl}/preview/${previewToken}`,
+      previewToken,
+      previewUrl: `${origin}/preview/${previewToken}`,
       businessData,
     });
   } catch (err) {

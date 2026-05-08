@@ -16,8 +16,7 @@ export async function POST(req: NextRequest) {
   const toEmail = overrideEmail ?? lead.email;
   if (!toEmail) return NextResponse.json({ error: 'No email address — add one to the lead first' }, { status: 400 });
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-  const previewUrl = `${baseUrl}/preview/${site.previewToken}`;
+  const previewUrl = `${req.nextUrl.origin}/preview/${site.previewToken}`;
 
   const websiteIssues: string[] = lead.websiteIssues ? JSON.parse(lead.websiteIssues) : [];
 

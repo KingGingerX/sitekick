@@ -35,6 +35,7 @@ export default function LeadsPage() {
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const [editEmail, setEditEmail] = useState('');
   const [filter, setFilter] = useState('all');
+  const [findingEmail, setFindingEmail] = useState<string | null>(null);
 
   const load = () => fetch('/api/leads').then((r) => r.json()).then(setLeads);
   useEffect(() => { load(); }, []);
@@ -71,6 +72,28 @@ export default function LeadsPage() {
       alert(`Failed: ${err}`);
     } finally {
       setSending(null);
+    }
+  }
+
+  async function findEmail(lead: Lead) {
+    setFindingEmail(lead.id);
+    try {
+      const res = await fetch('/api/leads/find-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadId: lead.id }),
+      });
+      const data = await res.json();
+      if (data.email) {
+        alert(`Found: ${data.email} — saved automatically`);
+        await load();
+      } else {
+        alert(data.error ?? data.message ?? 'No email found');
+      }
+    } catch {
+      alert('Failed to search for email');
+    } finally {
+      setFindingEmail(null);
     }
   }
 
@@ -264,6 +287,15 @@ export default function LeadsPage() {
                       className="text-sm bg-gray-100 px-3 py-1.5 rounded-lg hover:bg-gray-200"
                     >
                       Save Email
+                    </button>
+                  )}
+                  {lead.websiteUrl && (
+                    <button
+                      onClick={() => findEmail(lead)}
+                      disabled={findingEmail === lead.id}
+                      className="text-sm bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-lg hover:bg-green-100 disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {findingEmail === lead.id ? '🔍 Searching...' : '🔍 Find Email'}
                     </button>
                   )}
                 </div>

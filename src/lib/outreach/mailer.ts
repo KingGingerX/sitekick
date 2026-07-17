@@ -1,12 +1,15 @@
 import nodemailer from 'nodemailer';
+import { logger } from '@/lib/logger';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+const user = process.env.GMAIL_USER;
+const pass = process.env.GMAIL_APP_PASSWORD;
+
+const transporter = user && pass
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    })
+  : null;
 
 export interface OutreachEmailOptions {
   to: string;
@@ -171,11 +174,13 @@ export async function sendOutreachEmail(
   const builders = { 1: buildStage1, 2: buildStage2, 3: buildStage3 };
   const { subject, html, text } = builders[opts.stage](opts);
 
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+  if (!transporter) {
+    logger.warn('Gmail not configured — returning email draft only', { to: opts.to });
     return { subject, body: html };
   }
 
-  await transporter.sendMail({
+  try {
+    await transporter.sendMail({
     from: `${opts.senderName} <${process.env.GMAIL_USER}>`,
     to: opts.to,
     subject,
@@ -183,5 +188,9 @@ export async function sendOutreachEmail(
     text,
   });
 
-  return { subject, body: html };
+    return { subject, body: html };
+  } catch (err) {
+    logger.error('Failed to send outreach email', { to: opts.to, error: String(err) });
+    throw err;
+  }
 }

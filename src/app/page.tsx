@@ -19,11 +19,6 @@ interface Stats {
   closeRate: number;
 }
 
-function pct(n: number, d: number) {
-  if (!d) return '—';
-  return `${Math.round((n / d) * 100)}%`;
-}
-
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
 

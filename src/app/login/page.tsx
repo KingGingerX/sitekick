@@ -1,12 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   async function handleSubmit(e: React.FormEvent) {

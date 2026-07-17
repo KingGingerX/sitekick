@@ -3,10 +3,21 @@ import { db, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { generateBusinessContent, buildSiteHtml } from '@/lib/factory/site-builder';
 import { randomUUID } from 'crypto';
+import { assertOptionalString, assertUuid } from '@/lib/validate';
+import { apiError } from '@/lib/errors';
+import { rateLimit } from '@/lib/rate-limit';
+import { getClientIp } from '@/lib/get-ip';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
-    const { leadId, template } = await req.json();
+    const limit = rateLimit(getClientIp(req), { windowMs: 60_000, maxRequests: 10 });
+    if (!limit.allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    const body = await req.json();
+    const leadId = assertUuid(body.leadId, 'leadId');
 
     const lead = await db.select().from(schema.leads).where(eq(schema.leads.id, leadId)).get();
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
@@ -14,7 +25,7 @@ export async function POST(req: NextRequest) {
     const campaign = await db.select().from(schema.campaigns).where(eq(schema.campaigns.id, lead.campaignId)).get();
     if (!campaign) return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
 
-    const selectedTemplate = template ?? campaign.nicheTemplate;
+    const selectedTemplate = assertOptionalString(body.template) ?? campaign.nicheTemplate;
     const websiteIssues: string[] = lead.websiteIssues ? JSON.parse(lead.websiteIssues) : [];
 
     const businessData = await generateBusinessContent(
@@ -42,15 +53,13 @@ export async function POST(req: NextRequest) {
       generatedAt: new Date(),
     }).run();
 
-    // Verify the insert worked
     const saved = await db.select().from(schema.sites).where(eq(schema.sites.previewToken, previewToken)).get();
-    console.log('Site saved check:', saved ? 'FOUND' : 'NOT FOUND', 'token:', previewToken);
-
     if (!saved) {
       return NextResponse.json({ error: 'Site was generated but failed to save to database' }, { status: 500 });
     }
 
     await db.update(schema.leads).set({ status: 'site_built' }).where(eq(schema.leads.id, leadId)).run();
+    logger.info('Site generated', { leadId, siteId, previewToken });
 
     const origin = req.nextUrl.origin;
     return NextResponse.json({
@@ -60,7 +69,6 @@ export async function POST(req: NextRequest) {
       businessData,
     });
   } catch (err) {
-    console.error('Site generate error:', err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return apiError(err);
   }
 }

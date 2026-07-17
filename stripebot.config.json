@@ -1,0 +1,41 @@
+{
+  "project": "SiteKick",
+  "webhook": {
+    "url": "",
+    "events": [
+      "checkout.session.completed",
+      "payment_intent.succeeded",
+      "customer.subscription.created",
+      "customer.subscription.deleted",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ]
+  },
+  "products": [
+    {
+      "envVar": "STRIPE_PRICE_ID_BASE_SITE",
+      "name": "Website — One-Time",
+      "amount": 497,
+      "description": "Custom 5-page AI-generated website for local businesses"
+    },
+    {
+      "envVar": "STRIPE_PRICE_ID_WHITE_GLOVE",
+      "name": "White Glove Install",
+      "amount": 197,
+      "description": "DNS setup, speed optimization, schema markup, and deployment"
+    },
+    {
+      "envVar": "STRIPE_PRICE_ID_MONTHLY_SUPPORT",
+      "name": "Monthly Support Plan",
+      "amount": 49,
+      "interval": "month",
+      "description": "Unlimited updates, security monitoring, and priority support"
+    },
+    {
+      "envVar": "STRIPE_PRICE_ID_CUSTOM_FEATURE",
+      "name": "Custom Feature Add-On",
+      "amount": 297,
+      "description": "Additional custom feature, integration, or advanced SEO package"
+    }
+  ]
+}

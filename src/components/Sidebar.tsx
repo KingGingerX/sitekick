@@ -8,6 +8,7 @@ const links = [
   { href: '/leads', label: 'Leads', icon: '🔍' },
   { href: '/outreach', label: 'Outreach', icon: '✉️' },
   { href: '/deals', label: 'Deals', icon: '💰' },
+  { href: '/pricing', label: 'Pricing', icon: '🏷️' },
 ];
 
 export default function Sidebar() {

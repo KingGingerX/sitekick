@@ -1,8 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync } from 'fs';
 import path from 'path';
+import { logger } from '@/lib/logger';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const apiKey = process.env.ANTHROPIC_API_KEY;
+if (!apiKey) {
+  throw new Error('ANTHROPIC_API_KEY is not set in environment');
+}
+const client = new Anthropic({ apiKey });
 
 export interface BusinessData {
   name: string;
@@ -40,7 +45,7 @@ export async function generateBusinessContent(
     : '';
 
   const msg = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
     system: `You generate high-converting, professional website content for local businesses.
 Write in a confident, direct tone that speaks to local customers.
@@ -90,7 +95,12 @@ Return JSON matching this EXACT shape:
 
   const text = msg.content[0].type === 'text' ? msg.content[0].text : '{}';
   const cleaned = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-  return JSON.parse(cleaned) as BusinessData;
+  try {
+    return JSON.parse(cleaned) as BusinessData;
+  } catch {
+    logger.error('Failed to parse Claude response as JSON', { response: text.slice(0, 500) });
+    throw new Error('AI response was not valid JSON. Please retry.');
+  }
 }
 
 export function buildSiteHtml(template: string, data: BusinessData): string {

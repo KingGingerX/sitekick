@@ -119,5 +119,7 @@ export async function gradeWebsite(url: string | null): Promise<GradeResult> {
 }
 
 export function isWorthContacting(_grade: GradeResult): boolean {
+  // All leads are worth contacting; refine logic later based on score thresholds
+  void _grade;
   return true;
 }

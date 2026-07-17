@@ -5,12 +5,17 @@ import * as schema from './schema';
 let _client: Client | null = null;
 let _db: ReturnType<typeof drizzle> | null = null;
 
-function getClient(): Client {
+export function getClient(): Client {
   if (!_client) {
-    _client = createClient({
-      url: process.env.TURSO_DATABASE_URL!,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
+    const url = process.env.TURSO_DATABASE_URL?.trim();
+    const authToken = process.env.TURSO_AUTH_TOKEN?.trim();
+
+    if (url) {
+      _client = createClient({ url, authToken });
+    } else {
+      // Local development fallback using SQLite file
+      _client = createClient({ url: 'file:./sitekick.db' });
+    }
   }
   return _client;
 }
@@ -24,7 +29,7 @@ export function getDb() {
 
 export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {
   get(_target, prop) {
-    return (getDb() as any)[prop];
+    return (getDb() as unknown as Record<string, unknown>)[prop as string];
   },
 });
 

@@ -1,14 +1,20 @@
 import Stripe from 'stripe';
+import { getPriceId, type PriceIdKey } from './prices';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const secretKey = process.env.STRIPE_SECRET_KEY;
+if (!secretKey) {
+  throw new Error('STRIPE_SECRET_KEY is not set in environment');
+}
+
+export const stripe = new Stripe(secretKey, {
   apiVersion: '2026-03-25.dahlia',
 });
 
 export const PRICES = {
-  BASE_SITE: { amount: 49700, label: 'Website — One-Time' },           // $497
-  WHITE_GLOVE: { amount: 19700, label: 'White Glove Install' },         // $197
-  MONTHLY_SUPPORT: { amount: 4900, label: 'Monthly Support Plan' },     // $49/mo
-  CUSTOM_FEATURE: { amount: 29700, label: 'Custom Feature Add-On' },    // $297
+  BASE_SITE: { amount: 49700, label: 'Website — One-Time', priceIdKey: 'BASE_SITE' as PriceIdKey },
+  WHITE_GLOVE: { amount: 19700, label: 'White Glove Install', priceIdKey: 'WHITE_GLOVE' as PriceIdKey },
+  MONTHLY_SUPPORT: { amount: 4900, label: 'Monthly Support Plan', priceIdKey: 'MONTHLY_SUPPORT' as PriceIdKey },
+  CUSTOM_FEATURE: { amount: 29700, label: 'Custom Feature Add-On', priceIdKey: 'CUSTOM_FEATURE' as PriceIdKey },
 } as const;
 
 export type UpsellKey = 'WHITE_GLOVE' | 'MONTHLY_SUPPORT' | 'CUSTOM_FEATURE';
@@ -22,50 +28,32 @@ export interface CheckoutOptions {
 }
 
 export async function createCheckoutSession(opts: CheckoutOptions) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const lineItems: any[] = [
+  const lineItems: Array<{ price: string; quantity: number }> = [
     {
-      price_data: {
-        currency: 'usd',
-        product_data: { name: `${PRICES.BASE_SITE.label} — ${opts.businessName}` },
-        unit_amount: PRICES.BASE_SITE.amount,
-      },
+      price: getPriceId('BASE_SITE'),
       quantity: 1,
     },
   ];
 
   for (const upsell of opts.upsells) {
     const price = PRICES[upsell];
-    if (upsell === 'MONTHLY_SUPPORT') {
-      lineItems.push({
-        price_data: {
-          currency: 'usd',
-          product_data: { name: price.label },
-          recurring: { interval: 'month' },
-          unit_amount: price.amount,
-        },
-        quantity: 1,
-      });
-    } else {
-      lineItems.push({
-        price_data: {
-          currency: 'usd',
-          product_data: { name: price.label },
-          unit_amount: price.amount,
-        },
-        quantity: 1,
-      });
-    }
+    lineItems.push({
+      price: getPriceId(price.priceIdKey),
+      quantity: 1,
+    });
   }
 
-  const mode = opts.upsells.includes('MONTHLY_SUPPORT') ? 'subscription' : 'payment';
+  const hasSubscription = opts.upsells.includes('MONTHLY_SUPPORT');
 
   const session = await stripe.checkout.sessions.create({
-    mode: mode as 'payment' | 'subscription',
+    mode: hasSubscription ? 'subscription' : 'payment',
     line_items: lineItems,
     success_url: opts.successUrl + `?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: opts.cancelUrl,
-    metadata: { leadId: opts.leadId },
+    metadata: { leadId: opts.leadId, businessName: opts.businessName },
+    // Optional: collect tax, require phone, etc.
+    // automatic_tax: { enabled: true },
+    // customer_creation: 'always',
   });
 
   return session;
